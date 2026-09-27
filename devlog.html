@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수정일지 - 핵교SYSTEM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #FFFFFF;
+            color: #1E293B;
+            -webkit-font-smoothing: antialiased;
+        }
+        .devlog-body {
+            font-size: 15px;
+            line-height: 1.75;
+            color: #37352f;
+        }
+        .devlog-body h2 { font-size: 1.25rem; font-weight: 700; color: #0f172a; margin: 1.75rem 0 0.55rem; }
+        .devlog-body h3 { font-size: 1.08rem; font-weight: 700; color: #0f172a; margin: 1.25rem 0 0.45rem; }
+        .devlog-body p { margin: 0.4rem 0; }
+        .devlog-body ul { list-style: disc; padding-left: 1.35rem; margin: 0.2rem 0 1rem; }
+        .devlog-body li { margin: 0.28rem 0; }
+        .devlog-body code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.84em;
+            color: #c4554d;
+            background: #f1efec;
+            padding: 0.12em 0.4em;
+            border-radius: 4px;
+        }
+        .devlog-body pre { background: #f7f6f3; border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+        .devlog-body pre code { background: transparent; color: #37352f; padding: 0; }
+        .devlog-callout {
+            display: flex; gap: 10px; align-items: flex-start;
+            background: #f7f6f3; border-radius: 8px; padding: 14px 16px; margin: 0 0 1.5rem; line-height: 1.85;
+        }
+        .devlog-callout-icon { flex-shrink: 0; }
+        .devlog-callout-body { flex: 1; }
+        .devlog-callout.orange { background: #fbecdd; }
+        .devlog-callout.red { background: #fdebec; }
+        .devlog-callout.yellow { background: #fbf3db; }
+        .devlog-body table { border-collapse: collapse; width: 100%; margin: 0.75rem 0 1.2rem; font-size: 0.9em; }
+        .devlog-body th, .devlog-body td { border: 1px solid #e3e2e0; padding: 6px 10px; text-align: left; }
+        .devlog-body th { background: #f7f6f3; font-weight: 600; }
+    </style>
+</head>
+<body class="selection:bg-slate-900 selection:text-white">
+
+    <!-- 2026-08-31 /kyg 개발일지 페이지 (랜딩과 동일 헤더, 본문은 별도) -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-montserrat font-extrabold text-lg tracking-wider transition-transform duration-300 group-hover:scale-105">
+                    H
+                </div>
+                <span class="font-montserrat font-extrabold text-xl tracking-tight text-slate-900">핵교<span class="font-light text-slate-500">SYSTEM</span></span>
+            </a>
+
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+                <a href="index.html#about" class="hover:text-slate-950 transition-colors">38년의 신뢰</a>
+                <a href="index.html#comparison" class="hover:text-slate-950 transition-colors">비교 분석</a>
+                <a href="index.html#features" class="hover:text-slate-950 transition-colors">5대 연계 모듈</a>
+                <a href="index.html#pricing" class="hover:text-slate-950 transition-colors">요금안내</a>
+                <a href="devlog.html" class="text-slate-950 font-semibold">수정일지</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="devlog.html" class="md:hidden text-sm font-semibold text-slate-950">수정일지</a>
+                <a href="index.html#contact" class="hidden sm:inline-flex items-center justify-center px-5 h-11 text-sm font-semibold rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all">
+                    데모 신청
+                </a>
+                <a href="tel:01036629241" class="inline-flex items-center justify-center px-5 h-11 text-sm font-semibold rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-sm">
+                    전화 문의
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-xs font-bold tracking-[0.2em] uppercase text-slate-400 mb-3">Development Log</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">2026 수정일지</h1>
+            <p class="mt-4 text-slate-500 max-w-2xl leading-relaxed">
+                소스 수정, 규정 반영, 이슈를 날짜별로 기록합니다. 노션에 적은 내용은 사이트에 자동으로 반영됩니다.
+            </p>
+            <p id="devlogStatus" class="mt-3 text-xs text-slate-400">불러오는 중...</p>
+
+            <div id="monthTabs" class="mt-10 flex flex-wrap gap-2"></div>
+
+            <div class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <aside class="lg:col-span-4">
+                    <ul id="dayList" class="space-y-2"></ul>
+                </aside>
+                <article class="lg:col-span-8">
+                    <div id="dayDetail" class="rounded-2xl border border-slate-100 p-6 md:p-8 min-h-[240px]">
+                        <p class="text-slate-400 text-sm">왼쪽에서 날짜를 선택하세요.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900 text-sm">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+            <div class="md:col-span-5 space-y-4">
+                <span class="font-montserrat font-extrabold text-lg text-white tracking-wider">핵교SYSTEM</span>
+                <p class="font-light text-slate-500 text-xs leading-relaxed max-w-sm">
+                    지난 38년간 학교 행정 전산화의 한길만을 우직하게 걸어왔습니다. 대한민국 교육 현장의 진정한 혁신과 신뢰를 위한 가장 안정적인 동반자로 계속 함께 하겠습니다.
+                </p>
+                <p class="text-xs text-slate-600"> © 2026 핵교SYSTEM Integrated Solution. All Rights Reserved.</p>
+            </div>
+            <div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">주요 제공 모듈</h4>
+                    <ul class="space-y-2 text-xs text-slate-500">
+                        <li>회계 관리 통합 프로그램</li>
+                        <li>급여/인건비 자동 시뮬레이션</li>
+                        <li>CMS/지로 연동형 수납 관리</li>
+                        <li>재물조사/비품 바코드 시스템</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">기술 도입 및 문의</h4>
+                    <p class="text-xs text-slate-500">
+                        총괄 강영길<br/>
+                        연락처: <span class="text-slate-300 font-bold">010-3662-9241</span><br/>
+                        이메일: kovasoft@naver.com
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4 text-xs uppercase tracking-widest">보안성 통제 표준</h4>
+                    <ul class="space-y-2 text-xs text-slate-500">
+                        <li>64bit 고성능 처리 아키텍처</li>
+                        <li>사용자 접속 권한 세분화</li>
+                        <li>DB 백업 자동화 정책 탑재</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="devlog-fallback.js" charset="utf-8"></script>
+    <script>
+        let months = [];
+        let monthIndex = 0;
+        let dayIndex = 0;
+
+        function setStatus(text) {
+            document.getElementById('devlogStatus').textContent = text;
+        }
+
+        function renderTabs() {
+            const el = document.getElementById('monthTabs');
+            el.innerHTML = months.map(function (m, i) {
+                const on = i === monthIndex;
+                const cls = on
+                    ? 'px-4 h-10 rounded-full bg-slate-900 text-white text-sm font-semibold'
+                    : 'px-4 h-10 rounded-full border border-slate-200 text-slate-600 text-sm hover:border-slate-400';
+                return '<button type="button" class="' + cls + '" data-month="' + i + '">' + m.title + '</button>';
+            }).join('');
+            el.querySelectorAll('button').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    monthIndex = Number(btn.getAttribute('data-month'));
+                    dayIndex = 0;
+                    renderTabs();
+                    renderDays();
+                    renderDetail();
+                });
+            });
+        }
+
+        function renderDays() {
+            const month = months[monthIndex];
+            const el = document.getElementById('dayList');
+            if (!month || !month.days.length) {
+                el.innerHTML = '<li class="text-sm text-slate-400">이 달의 기록이 없습니다.</li>';
+                return;
+            }
+            el.innerHTML = month.days.map(function (d, i) {
+                const on = i === dayIndex;
+                const box = on ? 'border-slate-900 bg-slate-50' : 'border-slate-100 hover:border-slate-300';
+                return '<li><button type="button" data-day="' + i + '" class="w-full text-left rounded-xl border p-4 transition-all ' + box + '">' +
+                    '<div class="text-sm font-semibold text-slate-900">' + d.date + '</div>' +
+                    '<div class="mt-1 text-xs text-slate-500 line-clamp-2">' + (d.summary || '') + '</div>' +
+                    '</button></li>';
+            }).join('');
+            el.querySelectorAll('button').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    dayIndex = Number(btn.getAttribute('data-day'));
+                    renderDays();
+                    renderDetail();
+                });
+            });
+        }
+
+        function renderDetail() {
+            const month = months[monthIndex];
+            const day = month && month.days[dayIndex];
+            const el = document.getElementById('dayDetail');
+            if (!day) {
+                el.innerHTML = '<p class="text-slate-400 text-sm">왼쪽에서 날짜를 선택하세요.</p>';
+                return;
+            }
+            el.innerHTML = '<p class="text-xs font-bold tracking-widest uppercase text-slate-400">' + month.title + '</p>' +
+                '<h2 class="mt-2 text-2xl font-bold text-slate-900">' + day.date + '</h2>' +
+                '<div class="devlog-body mt-6 text-sm text-slate-700">' + (day.html || '') + '</div>';
+        }
+
+        function applyData(data, note) {
+            months = (data && data.months) ? data.months : [];
+            monthIndex = 0;
+            dayIndex = 0;
+            setStatus(note);
+            renderTabs();
+            renderDays();
+            renderDetail();
+        }
+
+        async function loadDevlog() {
+            try {
+                const res = await fetch('/api/devlog', { headers: { 'Accept': 'application/json' } });
+                if (!res.ok) throw new Error('api ' + res.status);
+                const data = await res.json();
+                if (!data.months) throw new Error('empty');
+                applyData(data, '노션과 동기화됨 (최대 15분 캐시)');
+            } catch (e) {
+                applyData(window.DEVLOG_FALLBACK, '저장된 요약입니다. 노션 연동 후 일자별 상세가 자동으로 표시됩니다.');
+            }
+        }
+
+        loadDevlog();
+    </script>
+</body>
+</html>

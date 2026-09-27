@@ -1,0 +1,9 @@
+# 2026-09-22 /kyg Pages Functions + D1. database_id 는 wrangler d1 create 결과로 바꿉니다.
+name = "update-kgi"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "USAGE_DB"
+database_name = "kova-usage"
+database_id = "00000000-0000-0000-0000-000000000000"

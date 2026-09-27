@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>접속 현황 - 핵교SYSTEM</title>
+    <!-- 2026-09-22 /kyg 접속 현황 관리 화면. 공개 메뉴에는 링크하지 않음 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Malgun Gothic', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-slate-900 font-sans antialiased selection:bg-slate-900 selection:text-white">
+
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-white font-montserrat font-extrabold text-lg tracking-wider">H</div>
+                <span class="font-montserrat font-extrabold text-xl tracking-tight">핵교<span class="font-light text-slate-500">SYSTEM</span></span>
+            </div>
+            <button id="logout" type="button" class="hidden items-center justify-center px-5 h-11 text-sm font-semibold rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50">로그아웃</button>
+        </div>
+    </header>
+
+    <main id="gate" class="min-h-screen flex items-center justify-center px-6 pt-20">
+        <section class="w-full max-w-md bg-white border border-slate-100 rounded-2xl shadow-xl p-8">
+            <p class="text-xs font-semibold tracking-widest text-slate-400">ADMIN</p>
+            <h1 class="mt-2 text-3xl font-black tracking-tight">접속 현황</h1>
+            <p class="mt-2 text-sm text-slate-500 font-light">모던 업데이트 채널의 학교 접속과 업무 시작을 봅니다.</p>
+            <label for="password" class="mt-8 block text-sm font-medium text-slate-700">관리자 비밀번호</label>
+            <input id="password" type="password" autocomplete="current-password" class="mt-2 w-full h-12 px-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-slate-900" placeholder="비밀번호">
+            <p id="gate-error" class="mt-2 text-sm text-rose-600 hidden">비밀번호를 입력하세요.</p>
+            <button id="enter" type="button" class="mt-6 w-full h-12 rounded-full bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">들어가기</button>
+        </section>
+    </main>
+
+    <main id="board" class="hidden min-h-screen pt-28 pb-16 px-6">
+        <div class="max-w-5xl mx-auto space-y-10">
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-black tracking-tight">접속 현황</h1>
+                <p id="board-note" class="mt-2 text-sm text-slate-500"></p>
+            </div>
+
+            <section class="max-w-xs bg-slate-900 text-white rounded-2xl p-6 shadow-lg">
+                <p class="text-sm text-slate-300">오늘 접속 학교</p>
+                <p id="today-count" class="mt-2 text-6xl font-black tracking-tight leading-none">0</p>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold">최근 기록</h2>
+                <p id="empty-note" class="mt-4 text-sm text-slate-500 hidden">아직 기록이 없습니다. 고객 PC가 이 기능을 받은 뒤 실행하면 여기에 쌓입니다.</p>
+                <div id="event-wrap" class="mt-4 bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="text-left font-medium px-5 py-3">시각</th>
+                                <th class="text-left font-medium px-5 py-3">학교</th>
+                                <th class="text-left font-medium px-5 py-3">구분</th>
+                                <th class="text-left font-medium px-5 py-3">업무</th>
+                            </tr>
+                        </thead>
+                        <tbody id="event-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold">학교별 마지막</h2>
+                <div id="school-grid" class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        var JOB = { acc: "회계", pay: "급여", rct: "수납", inv: "비품", cer: "증명" };
+        var EVENT = { update_ok: "업데이트 접속", job_start: "업무 시작" };
+        var gate = document.getElementById("gate");
+        var board = document.getElementById("board");
+        var logout = document.getElementById("logout");
+        var password = document.getElementById("password");
+        var error = document.getElementById("gate-error");
+
+        function jobLabel(code) {
+            if (!code) return "";
+            return JOB[code] || code;
+        }
+
+        function eventLabel(code) {
+            return EVENT[code] || code || "";
+        }
+
+        function formatWhen(iso) {
+            var d = new Date(iso);
+            if (isNaN(d.getTime())) return iso || "";
+            var now = new Date();
+            var sameDay = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(d)
+                === new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(now);
+            var opt = sameDay
+                ? { timeZone: "Asia/Seoul", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }
+                : { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" };
+            return new Intl.DateTimeFormat("ko-KR", opt).format(d);
+        }
+
+        function pill(text, dark) {
+            var span = document.createElement("span");
+            span.className = dark
+                ? "inline-flex px-3 h-7 items-center rounded-full bg-slate-900 text-white text-xs font-semibold"
+                : "inline-flex px-3 h-7 items-center rounded-full bg-slate-100 text-slate-700 text-xs font-semibold";
+            span.textContent = text;
+            return span;
+        }
+
+        function td(text, className) {
+            var cell = document.createElement("td");
+            cell.className = className;
+            cell.textContent = text;
+            return cell;
+        }
+
+        function render(data) {
+            document.getElementById("today-count").textContent = String(data.todaySchools || 0);
+            document.getElementById("board-note").textContent = "오늘 0시부터 학교 수를 셉니다.";
+            var events = data.events || [];
+            var schools = data.schools || [];
+            var empty = document.getElementById("empty-note");
+            var wrap = document.getElementById("event-wrap");
+            empty.classList.toggle("hidden", events.length > 0);
+            wrap.classList.toggle("hidden", events.length === 0);
+
+            var body = document.getElementById("event-body");
+            body.textContent = "";
+            events.forEach(function (row) {
+                var tr = document.createElement("tr");
+                tr.appendChild(td(formatWhen(row.ts), "px-5 py-4 text-slate-500"));
+                tr.appendChild(td(row.school || "", "px-5 py-4 font-medium"));
+                var kind = document.createElement("td");
+                kind.className = "px-5 py-4";
+                kind.appendChild(pill(eventLabel(row.event), row.event === "job_start"));
+                tr.appendChild(kind);
+                tr.appendChild(td(jobLabel(row.job) || "?", "px-5 py-4" + (row.job ? "" : " text-slate-400")));
+                body.appendChild(tr);
+            });
+
+            var grid = document.getElementById("school-grid");
+            grid.textContent = "";
+            schools.forEach(function (row) {
+                var card = document.createElement("article");
+                card.className = "border border-slate-100 rounded-2xl p-5 shadow-sm";
+                var kicker = document.createElement("p");
+                kicker.className = "text-xs font-semibold tracking-wider text-slate-400";
+                kicker.textContent = "학교";
+                var title = document.createElement("h3");
+                title.className = "mt-1 text-lg font-bold";
+                title.textContent = row.school || "";
+                var cap = document.createElement("p");
+                cap.className = "mt-4 text-xs text-slate-400";
+                cap.textContent = "마지막 접속";
+                var when = document.createElement("p");
+                when.className = "text-2xl font-black tracking-tight";
+                when.textContent = formatWhen(row.lastTs);
+                card.appendChild(kicker);
+                card.appendChild(title);
+                card.appendChild(cap);
+                card.appendChild(when);
+                if (row.lastJob) {
+                    var badge = pill(jobLabel(row.lastJob), true);
+                    badge.className += " mt-3";
+                    card.appendChild(badge);
+                } else {
+                    var none = document.createElement("p");
+                    none.className = "mt-3 text-sm text-slate-400";
+                    none.textContent = "업무 시작 전";
+                    card.appendChild(none);
+                }
+                grid.appendChild(card);
+            });
+        }
+
+        function showBoard() {
+            gate.classList.add("hidden");
+            board.classList.remove("hidden");
+            logout.classList.remove("hidden");
+            logout.classList.add("inline-flex");
+        }
+
+        function showGate(message) {
+            board.classList.add("hidden");
+            gate.classList.remove("hidden");
+            logout.classList.add("hidden");
+            logout.classList.remove("inline-flex");
+            if (message) {
+                error.textContent = message;
+                error.classList.remove("hidden");
+            }
+        }
+
+        function load(pw) {
+            error.classList.add("hidden");
+            fetch("/api/usage", {
+                headers: { "Accept": "application/json", "X-Admin-Password": pw }
+            }).then(function (res) {
+                if (res.status === 401) {
+                    sessionStorage.removeItem("usageAdminPassword");
+                    showGate("비밀번호가 맞지 않습니다.");
+                    return null;
+                }
+                if (!res.ok) throw new Error("load");
+                return res.json();
+            }).then(function (data) {
+                if (!data) return;
+                sessionStorage.setItem("usageAdminPassword", pw);
+                render(data);
+                showBoard();
+            }).catch(function () {
+                showGate("기록을 불러오지 못했습니다.");
+            });
+        }
+
+        document.getElementById("enter").addEventListener("click", function () {
+            if (password.value.trim().length === 0) {
+                error.textContent = "비밀번호를 입력하세요.";
+                error.classList.remove("hidden");
+                password.focus();
+                return;
+            }
+            load(password.value);
+        });
+        password.addEventListener("input", function () {
+            error.classList.add("hidden");
+        });
+        password.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") document.getElementById("enter").click();
+        });
+        logout.addEventListener("click", function () {
+            sessionStorage.removeItem("usageAdminPassword");
+            password.value = "";
+            showGate("");
+            error.classList.add("hidden");
+        });
+
+        var saved = sessionStorage.getItem("usageAdminPassword");
+        if (saved) load(saved);
+    </script>
+</body>
+</html>
